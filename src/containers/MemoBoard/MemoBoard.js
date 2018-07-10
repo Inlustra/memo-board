@@ -8,51 +8,32 @@ import {
   createRequest,
   isLoadingCreate,
   deleteRequest,
-  updateRequest
+  updateRequest,
 } from '../../modules/memos/memos.module'
+import Memo from '../../components/Memo'
 class MemoBoardPage extends Component {
   componentDidMount() {
     this.props.loadRequest()
   }
 
-  handleTitleChange(memo, title) {
-    this.props.updateRequest({id: memo.id, body: memo.body, title})
-  }
-  
-  handleBodyChange(memo, body) {
-    this.props.updateRequest({id: memo.id, title: memo.title, body})
-  }
-
   render() {
+    this.memos = {};
     return (
       <div className="MemoBoard">
-        {this.props.memos.map((memo, idx) => (
-          <article className="Memo" key={memo.id}>
-            <div
-              className="Title"
-              placeholder="Title"
-              onBlur={(e) => {this.handleTitleChange(memo, e.target.innerText)}}
-              suppressContentEditableWarning
-              contentEditable
-            >
-              {memo.title}
-            </div>
-            <div
-              className="Body"
-              placeholder="My Idea is..."
-              onBlur={(e) => {this.handleBodyChange(memo, e.target.innerText)}}
-              suppressContentEditableWarning
-              contentEditable
-            >
-              {memo.body}
-            </div>
-            <button
-              className="Delete-button"
-              onClick={() => this.props.deleteRequest(memo.id)}
-            >
-              X
-            </button>
-          </article>
+        {this.props.memos.map(({ id, title, body }, idx) => (
+          <Memo
+            key={id}
+            title={title}
+            body={body}
+            ref={el => this.memos[id] = el}
+            onBodyChange={newBody =>
+              this.props.updateRequest({ id, title, body: newBody })
+            }
+            onTitleChange={newTitle =>
+              this.props.updateRequest({ id, title: newTitle, body })
+            }
+            onClickDelete={() => this.props.deleteRequest(id)}
+          />
         ))}
         <article className="Memo" onClick={this.props.createRequest}>
           <button
@@ -66,6 +47,15 @@ class MemoBoardPage extends Component {
       </div>
     )
   }
+
+  componentDidUpdate({ memos }) {
+    if (this.props.memos.length > memos.length) {
+      const lastMemo = this.props.memos[this.props.memos.length - 1]
+      if (!lastMemo.title && !lastMemo.body) {
+        this.memos[lastMemo.id].focus();
+      }
+    }
+  }
 }
 
 const mapStateToProps = state => ({
@@ -78,7 +68,7 @@ const mapDispatchToProps = dispatch =>
       loadRequest,
       createRequest,
       deleteRequest,
-      updateRequest
+      updateRequest,
     },
     dispatch,
   )

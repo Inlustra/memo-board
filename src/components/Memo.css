@@ -1,0 +1,84 @@
+
+.Memo {
+    overflow: none;
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background: #ffffa5;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
+  
+  .Memo .Title,
+  .Memo .Body {
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    resize: none;
+    width: 100%;
+    padding: 2px;
+    overflow: hidden;
+  }
+  
+  [contenteditable='true']:empty:before {
+    content: attr(placeholder);
+    display: block; /* For Firefox */
+  }
+  
+  .Memo .Title:focus,
+  .Memo .Body:focus {
+    box-shadow: 0px 0px 0px 2px #bbb inset;
+  }
+  
+  .Memo .Title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  
+  .Memo .Body {
+    font-size: 12px;
+    letter-spacing: 1px;
+    line-height: 12px;
+    font-weight: 300;
+  }
+  
+  .Memo:hover .Delete-button {
+      visibility: visible;
+  }
+  
+  .Memo .Delete-button {
+      visibility: hidden;
+      color: red;
+      font-weight: 500;
+      background: white;
+      position: absolute;
+      top: 2px;
+      right: 0;
+      border: none;
+  }
+  
+  .Memo .Add-button {
+    text-align: center;
+    font-size: 65px;
+    font-weight: 300;
+    width: 150px;
+    line-height: 150px;
+    margin: 0;
+    border: none;
+    background: none;
+    vertical-align: middle;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  .Memo .Add-button.Loading {
+    animation: spin 0.5s linear infinite;
+  }
+  
