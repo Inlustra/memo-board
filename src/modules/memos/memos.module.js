@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { of } from 'rxjs'
-import { switchMap, map, catchError, tap } from 'rxjs/operators'
+import { switchMap, map, catchError } from 'rxjs/operators'
 
 export const moduleName = 'memos'
 

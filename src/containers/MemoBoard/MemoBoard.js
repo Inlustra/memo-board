@@ -31,7 +31,7 @@ class MemoBoardPage extends Component {
             <div
               className="Title"
               placeholder="Title"
-              onBlur={(e) => {console.log(e) || this.handleTitleChange(memo, e.target.value)}}
+              onBlur={(e) => {this.handleTitleChange(memo, e.target.innerText)}}
               suppressContentEditableWarning
               contentEditable
             >
@@ -40,7 +40,7 @@ class MemoBoardPage extends Component {
             <div
               className="Body"
               placeholder="My Idea is..."
-              onBlur={(e) => {this.handleBodyChange(memo, e.target.value)}}
+              onBlur={(e) => {this.handleBodyChange(memo, e.target.innerText)}}
               suppressContentEditableWarning
               contentEditable
             >

@@ -1,7 +1,7 @@
 .MemoBoard {
   width: 100%;
-  min-height: calc(100% - 120px);
-  background: #4a90e2;
+  min-height: 100%;
+  background: url('./cork-board.jpg') repeat;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -14,7 +14,7 @@
   position: relative;
   width: 150px;
   height: 150px;
-  background: #fff;
+  background: #ffffa5;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   margin: 10px;
@@ -62,7 +62,7 @@
     visibility: hidden;
     color: red;
     font-weight: 500;
-    background: none;
+    background: white;
     position: absolute;
     top: 2px;
     right: 0;
