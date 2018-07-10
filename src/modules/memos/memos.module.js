@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { of } from 'rxjs'
-import { switchMap, map, catchError } from 'rxjs/operators'
+import { switchMap, flatMap, map, catchError } from 'rxjs/operators'
 
 export const moduleName = 'memos'
 
@@ -56,10 +56,14 @@ const reducer = (state = initState, action) => {
         loading: { ...state.loading, create: false },
       }
     case UPDATE_SUCCESS: {
-      const memoIdx = state.memos.findIndex(memo => memo.id === action.payload.id)
+      const memoIdx = state.memos.findIndex(
+        memo => memo.id === action.payload.id,
+      )
       return {
         ...state,
-        memos: Object.assign([], state.memos, { [memoIdx]: action.payload }),
+        memos: Object.assign([], state.memos, {
+          [memoIdx]: { ...state.memos[memoIdx], ...action.payload },
+        }),
       }
     }
     case DELETE_SUCCESS:
@@ -133,7 +137,7 @@ export const loadRequest$ = (action$, _, deps) => {
 
 export const createRequest$ = (action$, _, { memoService }) =>
   action$.ofType(CREATE_REQUEST).pipe(
-    switchMap(() =>
+    flatMap(() =>
       memoService.createMemo().pipe(
         map(memo => createSuccess(memo)),
         catchError(error => of(createError(error))),
@@ -144,7 +148,7 @@ export const createRequest$ = (action$, _, { memoService }) =>
 export const updateRequest$ = (action$, _, { memoService }) =>
   action$.ofType(UPDATE_REQUEST).pipe(
     map(action => action.payload),
-    switchMap(memo =>
+    flatMap(memo =>
       memoService.updateMemo(memo).pipe(
         map(updatedMemo => updateSuccess(updatedMemo)),
         catchError(error => of(updateError(error))),
@@ -155,7 +159,7 @@ export const updateRequest$ = (action$, _, { memoService }) =>
 export const deleteRequest$ = (action$, _, { memoService }) =>
   action$.ofType(DELETE_REQUEST).pipe(
     map(action => action.payload),
-    switchMap(id =>
+    flatMap(id =>
       memoService.deleteMemo(id).pipe(
         map(() => deleteSuccess(id)),
         catchError(error => of(deleteError(error))),
