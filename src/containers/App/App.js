@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
+import MemoBoard from '../MemoBoard/MemoBoard'
 
 class App extends Component {
   render() {
@@ -8,9 +9,7 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">The Memo Board</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <MemoBoard />
       </div>
     )
   }

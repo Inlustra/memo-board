@@ -5,8 +5,13 @@ import App from './containers/App/App'
 import registerServiceWorker from './registerServiceWorker'
 import setupStore from './store'
 import { Provider } from 'react-redux'
+import { InMemMemoService } from './common/services/MemoService/InMemMemoService'
 
-const dependencies = {}
+const memoService = new InMemMemoService()
+
+const dependencies = {
+  memoService,
+}
 
 const store = setupStore(dependencies)
 

@@ -2,35 +2,28 @@ import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { combineEpics, createEpicMiddleware } from 'redux-observable'
 
-import memoBoardReducer, {
-  moduleName as memoBoardModuleName,
-  epics as memoBoardEpics,
-} from './containers/MemoBoard/MemoBoard.module'
-
-import entitiesReducer, {
-  moduleName as entitiesModuleName,
-} from './modules/entities/entities.module'
+import memosReducer, {
+  moduleName as memosModuleName,
+  epics as memosEpics,
+} from './modules/memos/memos.module'
 
 const rootReducer = combineReducers({
-  [entitiesModuleName]: entitiesReducer,
-  [memoBoardModuleName]: memoBoardReducer,
+  [memosModuleName]: memosReducer
 })
 
 // Epics
 
-const epics = [
-  ...memoBoardEpics
-]
+const epics = [...memosEpics]
 
 // Setup Store
 
 const setupStore = dependencies => {
-  const epicMiddleware = createEpicMiddleware()
-  epicMiddleware.run(combineEpics(...epics), dependencies)
-
+  const epicMiddleware = createEpicMiddleware({ dependencies })
   const middleware = composeWithDevTools(applyMiddleware(epicMiddleware))
+  const store = createStore(rootReducer, middleware)
+  epicMiddleware.run(combineEpics(...epics))
 
-  return createStore(rootReducer, middleware)
+  return store
 }
 
 export default setupStore

@@ -1,21 +1,84 @@
-import './Board.css'
-import React, { Component } from '../../../../../../../Library/Caches/typescript/2.9/node_modules/@types/react'
-import { connect } from '../../../../../../../Library/Caches/typescript/2.9/node_modules/@types/react-redux'
+import './MemoBoard.css'
+import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import {
+  getMemos,
+  loadRequest,
+  createRequest,
+  isLoadingCreate,
+  deleteRequest,
+  updateRequest
+} from '../../modules/memos/memos.module'
+class MemoBoardPage extends Component {
+  componentDidMount() {
+    this.props.loadRequest()
+  }
 
-class BoardPage extends Component {
+  handleTitleChange(memo, title) {
+    this.props.updateRequest({id: memo.id, body: memo.body, title})
+  }
+  
+  handleBodyChange(memo, body) {
+    this.props.updateRequest({id: memo.id, title: memo.title, body})
+  }
+
   render() {
-    return <div />
+    return (
+      <div className="MemoBoard">
+        {this.props.memos.map((memo, idx) => (
+          <article className="Memo" key={memo.id}>
+            <div
+              className="Title"
+              placeholder="Title"
+              onBlur={(e) => {console.log(e) || this.handleTitleChange(memo, e.target.value)}}
+              suppressContentEditableWarning
+              contentEditable
+            >
+              {memo.title}
+            </div>
+            <div
+              className="Body"
+              placeholder="My Idea is..."
+              onBlur={(e) => {this.handleBodyChange(memo, e.target.value)}}
+              suppressContentEditableWarning
+              contentEditable
+            >
+              {memo.body}
+            </div>
+            <button
+              className="Delete-button"
+              onClick={() => this.props.deleteRequest(memo.id)}
+            >
+              X
+            </button>
+          </article>
+        ))}
+        <article className="Memo" onClick={this.props.createRequest}>
+          <button
+            className={
+              'Add-button ' + (this.props.loadingNewMemo ? 'Loading' : '')
+            }
+          >
+            +
+          </button>
+        </article>
+      </div>
+    )
   }
 }
 
 const mapStateToProps = state => ({
-  error: getError(state),
+  memos: getMemos(state),
+  loadingNewMemo: isLoadingCreate(state),
 })
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      submit,
-      clear,
+      loadRequest,
+      createRequest,
+      deleteRequest,
+      updateRequest
     },
     dispatch,
   )
@@ -23,4 +86,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(BoardPage)
+)(MemoBoardPage)
