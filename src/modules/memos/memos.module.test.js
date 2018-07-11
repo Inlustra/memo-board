@@ -24,7 +24,9 @@ import reducer, {
   DELETE_REQUEST,
   deleteSuccess,
   deleteError,
+  loadRequest$,
 } from './memos.module'
+import { TestScheduler } from 'rxjs/testing'
 
 describe('memos reducer', () => {
   it('should return the initial state', () => {
@@ -286,9 +288,38 @@ describe('memos action creators', () => {
 
 describe('memos epics', () => {
   describe('loadRequest$', () => {
-    it('should fire a LOAD_SUCCESS on success')
-    it('should fire a LOAD_ERROR on error')
+    it('should fire a LOAD_SUCCESS on success', () => {
+      const testScheduler = new TestScheduler((actual, expected) =>
+        expect(actual).toEqual(expected),
+      )
+      testScheduler.run(({ hot, cold, expectObservable }) => {
+        const memos = [{ title: 'myTitle' }]
+        const action$ = hot('-a', { a: { type: LOAD_REQUEST } })
+        const output$ = loadRequest$(action$, null, {
+          memoService: {
+            getMemos: () => cold('--a', { a: memos }),
+          },
+        })
+        expectObservable(output$).toBe('---a', { a: loadSuccess(memos) })
+      })
+    })
+    it('should fire a LOAD_ERROR on error', () => {
+      const testScheduler = new TestScheduler((actual, expected) =>
+        expect(actual).toEqual(expected),
+      )
+      testScheduler.run(({ hot, cold, expectObservable }) => {
+        const error = { message: 'LoadError' }
+        const action$ = hot('-a', { a: { type: LOAD_REQUEST } })
+        const output$ = loadRequest$(action$, null, {
+          memoService: {
+            getMemos: () => cold('--#', {}, error),
+          },
+        })
+        expectObservable(output$).toBe('---a', { a: loadError(error) })
+      })
+    })
   })
+
   describe('createRequest$', () => {
     it('should fire a CREATE_SUCCESS on success')
     it('should fire a CREATE_ERROR on error')
