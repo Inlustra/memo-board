@@ -6,23 +6,23 @@ export const moduleName = 'memos'
 
 // Action Types
 
-const LOAD_REQUEST = 'memo-board/memos/LOAD_REQUEST'
-const LOAD_SUCCESS = 'memo-board/memos/LOAD_SUCCESS'
-const LOAD_ERROR = 'memo-board/memos/LOAD_ERROR'
+export const LOAD_REQUEST = 'memo-board/memos/LOAD_REQUEST'
+export const LOAD_SUCCESS = 'memo-board/memos/LOAD_SUCCESS'
+export const LOAD_ERROR = 'memo-board/memos/LOAD_ERROR'
 
-const CREATE_REQUEST = 'memo-board/memos/CREATE_REQUEST'
-const CREATE_SUCCESS = 'memo-board/memos/CREATE_SUCCESS'
-const CREATE_ERROR = 'memo-board/memos/CREATE_ERROR'
+export const CREATE_REQUEST = 'memo-board/memos/CREATE_REQUEST'
+export const CREATE_SUCCESS = 'memo-board/memos/CREATE_SUCCESS'
+export const CREATE_ERROR = 'memo-board/memos/CREATE_ERROR'
 
-const UPDATE_REQUEST = 'memo-board/memos/UPDATE_REQUEST'
-const UPDATE_SUCCESS = 'memo-board/memos/UPDATE_SUCCESS'
-const UPDATE_ERROR = 'memo-board/memos/UPDATE_ERROR'
+export const UPDATE_REQUEST = 'memo-board/memos/UPDATE_REQUEST'
+export const UPDATE_SUCCESS = 'memo-board/memos/UPDATE_SUCCESS'
+export const UPDATE_ERROR = 'memo-board/memos/UPDATE_ERROR'
 
-const DELETE_REQUEST = 'memo-board/memos/DELETE_REQUEST'
-const DELETE_SUCCESS = 'memo-board/memos/DELETE_SUCCESS'
-const DELETE_ERROR = 'memo-board/memos/DELETE_ERROR'
+export const DELETE_REQUEST = 'memo-board/memos/DELETE_REQUEST'
+export const DELETE_SUCCESS = 'memo-board/memos/DELETE_SUCCESS'
+export const DELETE_ERROR = 'memo-board/memos/DELETE_ERROR'
 
-const CLEAR_ERRORS = 'memo-board/memos/CLEAR_ERRORS'
+export const CLEAR_ERRORS = 'memo-board/memos/CLEAR_ERRORS'
 
 // Reducer
 
@@ -59,22 +59,29 @@ const reducer = (state = initState, action) => {
       const memoIdx = state.memos.findIndex(
         memo => memo.id === action.payload.id,
       )
-      return {
-        ...state,
-        memos: Object.assign([], state.memos, {
-          [memoIdx]: { ...state.memos[memoIdx], ...action.payload },
-        }),
-      }
+      return memoIdx === -1
+        ? {
+            ...state,
+            error: { message: 'Attempted to update a memo that was not found' },
+          }
+        : {
+            ...state,
+            memos: Object.assign([], state.memos, {
+              [memoIdx]: { ...state.memos[memoIdx], ...action.payload },
+            }),
+          }
     }
     case DELETE_SUCCESS:
       const memoIdx = state.memos.findIndex(memo => memo.id === action.payload)
-      return {
-        ...state,
-        memos: [
-          ...state.memos.slice(0, memoIdx),
-          ...state.memos.slice(memoIdx + 1),
-        ],
-      }
+      return memoIdx === -1
+        ? state
+        : {
+            ...state,
+            memos: [
+              ...state.memos.slice(0, memoIdx),
+              ...state.memos.slice(memoIdx + 1),
+            ],
+          }
     case CLEAR_ERRORS:
       return { ...state, error: null }
     case CREATE_ERROR:
@@ -83,10 +90,27 @@ const reducer = (state = initState, action) => {
         error: action.payload,
         loading: { ...state.loading, create: false },
       }
+
     case LOAD_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+        loading: { ...state.loading, load: false },
+      }
+
     case UPDATE_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+        loading: { ...state.loading, update: false },
+      }
+
     case DELETE_ERROR:
-      return { ...state, error: action.payload }
+      return {
+        ...state,
+        error: action.payload,
+        loading: { ...state.loading, delete: false },
+      }
     default:
       return state
   }
@@ -113,7 +137,7 @@ export const createError = error => ({ type: CREATE_ERROR, payload: error })
 
 export const updateRequest = memo => ({ type: UPDATE_REQUEST, payload: memo })
 export const updateSuccess = memo => ({ type: UPDATE_SUCCESS, payload: memo })
-export const updateError = error => ({ type: UPDATE_REQUEST, payload: error })
+export const updateError = error => ({ type: UPDATE_ERROR, payload: error })
 
 export const deleteRequest = id => ({ type: DELETE_REQUEST, payload: id })
 export const deleteSuccess = id => ({ type: DELETE_SUCCESS, payload: id })
