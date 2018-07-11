@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
-import MemoBoard from '../MemoBoard/MemoBoard'
+import MemoBoard from './MemoBoard/MemoBoard'
 
 class App extends Component {
   render() {
