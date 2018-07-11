@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect'
 import { of } from 'rxjs'
 import { switchMap, flatMap, map, catchError } from 'rxjs/operators'
+import { ofType } from 'redux-observable'
 
 export const moduleName = 'memos'
 
@@ -148,8 +149,8 @@ export const clearErrors = () => ({ tyoe: CLEAR_ERRORS })
 // Epics
 
 export const loadRequest$ = (action$, _, deps) => {
-  console.log(deps)
-  return action$.ofType(LOAD_REQUEST).pipe(
+  return action$.pipe(
+    ofType(LOAD_REQUEST),
     switchMap(() =>
       deps.memoService.getMemos().pipe(
         map(memos => loadSuccess(memos)),
@@ -160,7 +161,8 @@ export const loadRequest$ = (action$, _, deps) => {
 }
 
 export const createRequest$ = (action$, _, { memoService }) =>
-  action$.ofType(CREATE_REQUEST).pipe(
+  action$.pipe(
+    ofType(CREATE_REQUEST),
     flatMap(() =>
       memoService.createMemo().pipe(
         map(memo => createSuccess(memo)),
@@ -170,7 +172,8 @@ export const createRequest$ = (action$, _, { memoService }) =>
   )
 
 export const updateRequest$ = (action$, _, { memoService }) =>
-  action$.ofType(UPDATE_REQUEST).pipe(
+  action$.pipe(
+    ofType(UPDATE_REQUEST),
     map(action => action.payload),
     flatMap(memo =>
       memoService.updateMemo(memo).pipe(
@@ -181,7 +184,8 @@ export const updateRequest$ = (action$, _, { memoService }) =>
   )
 
 export const deleteRequest$ = (action$, _, { memoService }) =>
-  action$.ofType(DELETE_REQUEST).pipe(
+  action$.pipe(
+    ofType(DELETE_REQUEST),
     map(action => action.payload),
     flatMap(id =>
       memoService.deleteMemo(id).pipe(
